@@ -5,6 +5,8 @@ function draw() {
     /* check if drawing is supported by browser */
     if (canvas.getContext) {
         ctx = canvas.getContext('2d');
+
+        /* load sprite sheet and draw individual sprites */
         img = new Image();
         img.src = "assets/duckhunt.png";
         img.onload = function() {
