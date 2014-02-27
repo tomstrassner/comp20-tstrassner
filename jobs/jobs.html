@@ -11,7 +11,12 @@
 		
                 jobs = JSON.parse(str);
 
-                
+                headerNode = document.createElement('h1');
+                headerTxt = document.createTextNode("Job Openings");
+                headerNode.appendChild(headerTxt);
+                document.getElementById('list').appendChild(headerNode);       
+
+                /* parse JSON string */
                 for (object in jobs) {
                         /* create div to hold job info */
                         node = document.createElement('div');
@@ -32,8 +37,6 @@
                         /* append all info to list */
                         document.getElementById('list').appendChild(node);
                 }
-
-
 	}
 </script>
 </head>
