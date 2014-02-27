@@ -1,0 +1,20 @@
+body {
+    background-color: #D9DBDB;
+}
+
+h1 {
+    padding-left: 10px;
+    color: #0D4F4F;
+}
+
+.job_info {
+    background-color: #8BE8E8;
+    color: #0D4F4F;
+    margin-bottom: 20px;
+    width: 400px;
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-shadow: 2px 2px 4px #0A7A7A;
+}
