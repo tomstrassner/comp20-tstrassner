@@ -15,19 +15,25 @@
             status += date.getHours().toString() + ":";
             status += date.getMinutes().toString() + " - ";
             status += msg;
+            localStorage[new Date().getTime()] = status;
+            reload();
+        }
 
-            var paragraph = document.createElement('p');
-            var statusNode = document.createTextNode(status);
-            paragraph.appendChild(statusNode);
-
-            var elem = document.getElementById('status');
-            elem.insertBefore(paragraph, document.getElementById('status').firstChild);
+        function reload() {
+            document.getElementById('status').innerHTML = "";
+            for (key in localStorage) {
+                var paragraph = document.createElement('p');
+                var statusNode = document.createTextNode(localStorage[key]);
+                paragraph.appendChild(statusNode);
+                var elem = document.getElementById('status');
+                elem.insertBefore(paragraph, document.getElementById('status').firstChild);
+            }
         }
 
     </script>
 </head>
 
-<body>
+<body onload="reload()">
     <h1>Fecebook</h1>
     <div id="nav">
         <ul>
