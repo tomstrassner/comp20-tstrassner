@@ -6,6 +6,4 @@ of the DOM using javascript.
 statuses are stored in browser's localStorage, so that it will remember posts
 that are made in the same browser session and display them on page load.
 
-URL for heroku app: http://polar-retreat-8672.herokuapp.com/
-
 I spent approximately 1.5 hours on this assignment
