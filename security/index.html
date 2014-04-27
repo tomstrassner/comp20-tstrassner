@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Report</title>
+    <link rel="stylesheet" type="text/css" href="style/style.css"></link>
+</head>
+
+<body>
+    <h1>Security Assessment of 2048 Game Center</h1>
+    <p id="author">by Thomas Strassner</p>
+
+    <h2>Introduction</h2>
+    <ul>
+        <li>Product: Created by Connor McCann, it is a "Game-Center" in which
+            the user can play the popular game, 2048, and see all of their high
+            scores.</li>
+        <li>Objective of this report: My inention is to find security flaws in
+            the application, describe them, and offer helpful ways to resolve them.
+        </li>
+    </ul>
+
+    <hr>
+    <h2>Methodology</h2>
+    <p>In my approach, I had two primary methodologies. First, I used curl from
+        the command line, experimenting by posting a wide variety of parameters
+        to the POST request. I tried leaving out fields, adding additional
+        fields, and sending improper input for each field. My second methodology
+        was examining the server-side source code. The main JavaScript file is
+        only 156 lines, so it was easy to get a handle on and examine properly.
+    </p>
+    <hr>
+    <h2>Abstract of Findings</h2>
+    <p>In my evaluation, I found three securtiy flaws: </p>
+    <ul>
+        <li>A user could easily cheat, giving themselves any username and any
+            score, without even actually playing the game. While this does not
+            pose any major malicious threat, it must be fixed immediately, as
+            honest users will quickly be dettered from using the application
+            if all of the highest scores are fake.
+        </li>
+        <li>A malicous user could essentially put anything they want onto the
+            webpage, or redirect the page entirely, by injecting their own code.
+            It is vital that this issue is patched as soon as possible, before
+            the website is compromised.
+        </li>
+        <li>A user could make the application store anything they want as the
+            grid object. While I do not believe you have to worry about
+            anything very sinister happening here, it could result in a user
+            receiving bogus data when requesting their scores.
+        </li>
+    </ul>
+    <hr>
+    <h2>Issus Found</h2>
+    <h3>Issue 1: Inject false score with curl</h3>
+    <ul>
+        <li>Location: submit.json</li>
+        <li>Severity: Medium. This would be really annoying and make it very
+            easy for users to cheat, but there's nothing very malicious about
+            entering a false score.</li>
+        <li>I found this issue by doing a simple POST request via curl. As you
+            can see in the images below, I inserted my own score without
+            actually playing the game. The first image is the curl command and
+            the second image is my new high score (with fake username, hack). 
+            <br><br>
+            <img id="fsi" src="images/false-score-injection.png" alt="Curl Command">
+            <br>
+            <img src="images/false-high-score.png" alt="False High Score">
+            </li>
+        <li>Resolution: This issue seems difficult to resolve without making
+            major changes to the application. As long as the username and score
+            are sent this way with the grid via submit.json, I don't think this
+            can be prevented. One solution I did think would be to store users
+            and sessions in the database, and force users to sign in anytime
+            they play. Then you could limit the username to only the one
+            currently logged in. It should be noted that this is out of the
+            scope of my knowledge of web applications, and is only speculation
+        </li>
+    </ul>
+    <br>
+    <h3>Issue 2: Inject script</h3>
+    <ul>
+        <li>Location: submit.json</li>
+        <li>Severity: High. This sort of attack could get very dangerous. When
+            a user can insert their own script into the database, there is
+            almost no limit to what they can do. In the case of this 2048
+            gamcenter, I could inject a script that redirects the user to a
+            completely different page</li>
+        <li>I discovered this issue by experimenting with curl. If I put in a
+            script tag instead of my username, then I the site will execute it.
+            For example, in the image below, you see a curl command that I used
+            to load the Wikipedia page on Code Injection, rather than the 2048
+            gamecenter application.
+            <br><br>
+            <img id="si" src="images/script-injection.png" alt="Script injection">
+            <br><br>
+        </li>
+        <li>Resolution: This issue can be resolved by validating each field in
+            a POST request, before inserting into the database. On the server-
+            side, you could validate username by using <code>str.match()</code>
+            and reject it if there are any puntuation characters. However, it
+            should be noted that this would also require the client side
+            application to inform the user beforehand that they cannot have
+            any punctuation in their username. The score can be validated simply
+            by using the JavaScript <code>isNaN()</code> function.
+        </li>
+    </ul>
+    <br>
+    <h3>Issue 3: No validation of JSON grid</h3>
+    <ul>
+        <li>Location: submit.json and scores.json</li>
+        <li>Severity: Low. There doesn't seem to be anything truly malicious
+            that could go on here. The only issue is that when I use curl to
+            post JSON with improper format as the grid parameter, it will then
+            return the bogus JSON when the user requests that data back via
+            scores.json.</li>
+        <li>I figured this out by examining the source code. The server
+            inserts and grabs the JSON to and from the database without ever
+            validating it.
+        </li>
+        <li>Resolution: This could be resolved by using <code>JSON.parse()</code>
+            in a try catch block, before inserting into the database. This way,
+            you only have to worry about it once, when you insert, rather than
+            every time you retrieve it and send it somehwere else.
+        </li>
+    </ul>  
+    <hr>
+    <h2>Conclusion</h2>
+    <p>The most important fix that needs to be made is preventing a user from
+        submitting any data they want via curl, and any other similar tools.
+        I described one possible solution to this in my resolution to issue 2.
+        However, this would require a total restructuing of the server and the
+        database, so you should handle this with care. Other than this, I do
+        not believe there are any serious security flaws. From what I can tell,
+        this is a well-made application.
+    </p>
+</body>
+</html>
